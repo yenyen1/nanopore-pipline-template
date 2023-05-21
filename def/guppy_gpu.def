@@ -1,0 +1,19 @@
+Bootstrap: docker
+From: nanozoo/guppy_gpu:6.4.6-1--2c17584
+Stage: build
+
+%files
+
+%environment
+
+
+%post
+        export DEBIAN_FRONTEND="noninteractive" 
+        export TZ="Europe/London"
+        apt update
+        apt install -y cuda-drivers-525
+
+%labels
+
+%help
+        echo "test"
