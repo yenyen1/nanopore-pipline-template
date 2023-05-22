@@ -130,6 +130,8 @@ call.clair3: # sample
 	$(eval fasta=$(GRCH38))
 	$(eval bam=$(BAM_DIR)/$(PROJECT)/$(sample).sorted.bam)
 	$(eval outdir=$(VAR_DIR)/$(PROJECT)/clair3_g5014/$(sample)_clair3)
+	$(eval raw_vcf=$(VAR_DIR)/$(PROJECT)/clair3_g5014/$(sample)_clair3/merge_output.vcf.gz)
+	$(eval qc_vcf=$(VAR_DIR)/$(PROJECT)/clair3_g5014/$(sample)_clair3_pass_GQ20_DP10.vcf.gz)
 	mkdir -p $(outdir)
 	singularity exec \
                 -B $(REF_DIR) \
@@ -142,6 +144,8 @@ call.clair3: # sample
                 	--threads=24 \
                 	--platform="ont" \
                 	--model_path="/opt/models/r941_prom_sup_g5014" 
+	bcftools view -Oz -f 'PASS' -i'GQ>=20 & FORMAT/DP>=10' -o $(qc_vcf) $(raw_vcf) 
+	tabix -p vcf $(qc_vcf)
 
 call.svim: #sample=
 	$(eval fasta=$(GRCH38))
@@ -253,7 +257,6 @@ nanopolish: #sample=, gene=, t=, range="chr2:178,425,989-178,907,423"
 	$(eval merged_fq=$(FQ_DIR)/$(PROJECT)/$(sample).fastq.gz)
 	$(eval merged_bam=$(BAM_DIR)/$(PROJECT)/$(sample).sorted.bam)
 	$(eval outbam=$(OUTPUT_DIR)/$(PROJECT)/$(gene)/$(sample)_methylation_$(gene).bam)
-	$(eval out=$(OUTPUT_DIR)/$(PROJECT)/$(gene)/$(sample)_methylation_$(gene)_calls.tsv)
 	mkdir -p $(OUTPUT_DIR)/$(PROJECT)/$(gene)
 	singularity exec \
 		-B $(fast5) \
@@ -271,9 +274,9 @@ nanopolish: #sample=, gene=, t=, range="chr2:178,425,989-178,907,423"
 			--modbam-output-name=$(outbam) 
 
 whatshap.phase: #sample=
-	$(eval in_bam=$(BAMDIR)/$(sample).sorted.bam)
-	$(eval in_vcf=$(NGSDIR)/$(sample)_GQ20_DP10.vcf.gz)
-	$(eval out_vcf=$(NGSDIR)/$(sample)_GQ20_DP10_phased.vcf.gz)
+	$(eval in_bam=$(BAM_DIR)/$(PROJECT)/$(sample).sorted.bam)
+	$(eval in_vcf=$(VAR_DIR)/$(PROJECT)/clair3_g5014/$(sample)_clair3_pass_GQ20_DP10.vcf.gz)
+	$(eval out_vcf=$(VAR_DIR)/$(PROJECT)/clair3_g5014/$(sample)_clair3_GQ20_DP10_phased.vcf.gz)
 	singularity exec \
                 -B $(REF_DIR) \
                 -B $(BAMDIR) \
@@ -283,6 +286,7 @@ whatshap.phase: #sample=
                         --reference=$(GRCH38_UC) \
                         $(in_vcf) \
                         $(in_bam)
+	tabix $(out_vcf)
 
 GGG = 
 
@@ -296,16 +300,31 @@ run.all.haplotag: #sample=
 		printf "\n" >> $(stats) ;\
 	done
 
-whatshap.haplotag: #sample=
+whatshap.haplotag.bam: #sample=
+	$(eval in_bam=$(BAM_DIR)/$(PROJECT)/$(sample).sorted.bam)
+	$(eval in_vcf=$(VAR_DIR)/$(PROJECT)/clair3_g5014/$(sample)_clair3_GQ20_DP10_phased.vcf.gz)
+	$(eval out_bam=$(BAM_DIR)/$(PROJECT)/$(sample).sorted.phased.bam)
+	singularity exec \
+		-B $(REF_DIR) \
+		-B $(VAR_DIR) \
+		-B $(BAM_DIR) \
+		$(WHATSHAP_SIF) whatshap haplotag \
+		-o $(out_bam) \
+		--reference=$(GRCH38_UC) \
+		$(in_vcf) \
+		$(in_bam)
+	samtools index $(out_bam)
+
+whatshap.haplotag.methylated.bam: #sample=
 	$(eval in_bam=$(OUTPUT_DIR)/$(PROJECT)/$(gene)/$(sample)_methylation_$(gene).bam)
-	$(eval in_vcf=$(VAR_DIR)/$(PROJECT)/gatk_phased/$(sample)_GQ20_DP10_phased_dcm_genes.vcf.gz)
-	$(eval out_bam=$(OUTPUT_DIR)/$(PROJECT)/phased/$(sample)_methylation_$(gene)_phased.bam)
+	$(eval in_vcf=$(VAR_DIR)/$(PROJECT)/clair3_g5014/$(sample)_clair3_GQ20_DP10_phased.vcf.gz)
+	$(eval out_bam=$(OUTPUT_DIR)/$(PROJECT)/phased/$(sample)_methylated.phased.$(gene).bam)
 	mkdir -p $(OUTPUT_DIR)/$(PROJECT)/phased
 	singularity exec \
 		-B $(REF_DIR) \
 		-B $(VAR_DIR) \
 		-B $(OUTPUT_DIR) \
-		$(WHATSHAP) whatshap haplotag \
+		$(WHATSHAP_SIF) whatshap haplotag \
 		-o $(out_bam) \
 		--reference=$(GRCH38_UC) \
 		$(in_vcf) \
