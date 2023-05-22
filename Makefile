@@ -288,18 +288,6 @@ whatshap.phase: #sample=
                         $(in_bam)
 	tabix $(out_vcf)
 
-GGG = 
-
-run.all.haplotag: #sample=
-	$(eval stats=$(OUTPUT_DIR)/$(PROJECT)/phased/$(sample)_phased_stats.txt)
-	for g in $(GGG) ; do \
-		echo "$${g}" ;\
-		make whatshap.haplotag sample=$(sample) gene=$${g} 2> temp.txt ;\
-		printf "$${g} " >> $(stats) ;\
-		cat temp.txt | grep lignment | sed 's# ##g' | awk -F":" '{print $$2}' | tr "\n" " " >> $(stats) ;\
-		printf "\n" >> $(stats) ;\
-	done
-
 whatshap.haplotag.bam: #sample=
 	$(eval in_bam=$(BAM_DIR)/$(PROJECT)/$(sample).sorted.bam)
 	$(eval in_vcf=$(VAR_DIR)/$(PROJECT)/clair3_g5014/$(sample)_clair3_GQ20_DP10_phased.vcf.gz)
@@ -314,21 +302,4 @@ whatshap.haplotag.bam: #sample=
 		$(in_vcf) \
 		$(in_bam)
 	samtools index $(out_bam)
-
-whatshap.haplotag.methylated.bam: #sample=
-	$(eval in_bam=$(OUTPUT_DIR)/$(PROJECT)/$(gene)/$(sample)_methylation_$(gene).bam)
-	$(eval in_vcf=$(VAR_DIR)/$(PROJECT)/clair3_g5014/$(sample)_clair3_GQ20_DP10_phased.vcf.gz)
-	$(eval out_bam=$(OUTPUT_DIR)/$(PROJECT)/phased/$(sample)_methylated.phased.$(gene).bam)
-	mkdir -p $(OUTPUT_DIR)/$(PROJECT)/phased
-	singularity exec \
-		-B $(REF_DIR) \
-		-B $(VAR_DIR) \
-		-B $(OUTPUT_DIR) \
-		$(WHATSHAP_SIF) whatshap haplotag \
-		-o $(out_bam) \
-		--reference=$(GRCH38_UC) \
-		$(in_vcf) \
-		$(in_bam)
-	samtools index $(out_bam)
-
 

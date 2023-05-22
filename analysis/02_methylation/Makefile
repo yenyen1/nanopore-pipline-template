@@ -8,6 +8,9 @@ BAM_DIR=$(DATA_DIR)/BAM
 OUTPUT_DIR=$(DATA_DIR)/OUTPUT
 VAR_DIR=$(DATA_DIR)/VARIANT_CALL
 
+### REFERENCES (NEED_TO_DOWNLOAD)
+REF_DIR=
+GRCH38_UC=$(REF_DIR)/GRCh38/GCA_000001405.15_GRCh38_no_alt_analysis_set.fasta
 
 ### SIF NEED TO GENERATE
 WHATSHAP_SIF=
@@ -83,6 +86,31 @@ gen.whole.heatmap:  #GENE IDX SAMPLE ...
 		cat $(indir)/$${g}/heatmap_$${g}.txt | awk -v s=$${g} '{print s"\t"$$0}' >> $(out) ;\
 	done
 
+run.all.haplotag: #sample=
+	$(eval stats=$(OUTPUT_DIR)/$(PROJECT)/phased/$(sample)_phased_stats.txt)
+	for g in $(GENES) ; do \
+                echo "$${g}" ;\
+                make whatshap.haplotag.methylated.bam sample=$(sample) gene=$${g} 2> temp.txt ;\
+                printf "$${g} " >> $(stats) ;\
+                cat temp.txt | grep lignment | sed 's# ##g' | awk -F":" '{print $$2}' | tr "\n" " " >> $(stats) ;\
+                printf "\n" >> $(stats) ;\
+	done
+
+whatshap.haplotag.methylated.bam: #sample=, gene=
+	$(eval in_bam=$(OUTPUT_DIR)/$(PROJECT)/$(gene)/$(sample)_methylation_$(gene).bam)
+	$(eval in_vcf=$(VAR_DIR)/$(PROJECT)/clair3_g5014/$(sample)_clair3_GQ20_DP10_phased.vcf.gz)
+	$(eval out_bam=$(OUTPUT_DIR)/$(PROJECT)/phased/$(sample)_methylated.phased.$(gene).bam)
+	mkdir -p $(OUTPUT_DIR)/$(PROJECT)/phased
+	singularity exec \
+                -B $(REF_DIR) \
+                -B $(VAR_DIR) \
+                -B $(OUTPUT_DIR) \
+                $(WHATSHAP_SIF) whatshap haplotag \
+                -o $(out_bam) \
+                --reference=$(GRCH38_UC) \
+                $(in_vcf) \
+                $(in_bam)
+	samtools index $(out_bam)
 
 take.igv.converge.snapshot: # gene_list=
 	$(eval outdir=$(OUTPUT_DIR)/$(PROJECT)/igv_screenshot/methyl_coverage)
@@ -104,7 +132,7 @@ take.igv.converge.snapshot: # gene_list=
 
 
 take.igv.haplotag.snapshot: # gene_list=
-	$(eval outdir=$(OUTPUT_DIR)/$(PROJECT)/igv_screenshot/methyl_haplotag/r2)
+	$(eval outdir=$(OUTPUT_DIR)/$(PROJECT)/igv_screenshot/methyl_haplotag/)
 	$(eval batch=$(outdir)/batch_script.txt)
 	$(eval xvfb="-screen 0 1920x1440x24")
 	mkdir -p $(outdir)
