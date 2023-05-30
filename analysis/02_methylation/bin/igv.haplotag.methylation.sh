@@ -1,8 +1,11 @@
 #!/use/bin/perl
+### Author: yenyen.wang
 
+use strict;
+use warnings;
 
-$gene_list = $ARGV[0];
-$output_dir = $ARGV[1];
+my $gene_list = $ARGV[0];
+my $output_dir = $ARGV[1];
 
 open(GENE_LIST,$gene_list) || die "can not open $gene_list\n";
 

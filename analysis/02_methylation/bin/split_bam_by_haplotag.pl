@@ -1,5 +1,6 @@
 #!/usr/bin/perl
 ### Usage: perl split_bam_by_haplotag.pl ${inbam} ${h1.bam} ${h2.bam} ${un.bam}
+### Author: yenyen.wang
 
 use strict;
 use warnings;
