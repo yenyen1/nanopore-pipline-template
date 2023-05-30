@@ -16,7 +16,6 @@ open(UN, '>', $unbam) or die "can not write $unbam $!";
 
 while(<INBAM>){
 	if($_ =~/^(\@)/) {
-		print $_;
 		print H1 $_;
 		print H2 $_;
 		print UN $_;
