@@ -29,7 +29,7 @@ NANOPOLISH_SIF=
 WHATSHAP_SIF=
 
 ### VAR
-PROJECT=DCM
+PROJECT=
 
 
 add.log.dir:
