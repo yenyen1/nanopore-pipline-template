@@ -45,6 +45,7 @@ besecall.with.guppy.gpu: #sample=, run=, flow_cell=, kit=, run_dir=
 	apptainer exec \
 		-B $(out_dir) \
 		-B $(in_dir) \
+		--nv \
 		$(GUPPY_GPU_SIF) guppy_basecaller \
                         --compress_fastq \
                         -i $(in_dir) \
