@@ -42,7 +42,7 @@ besecall.with.guppy.gpu: #sample=, run=, flow_cell=, kit=, run_dir=
 	$(eval in_dir=$(F5_DIR)/$(PROJECT)/$(sample)/$(run_dir))
 	$(eval out_dir=$(FQ_DIR)/$(PROJECT)/$(sample)/$(run))
 	mkdir -p $(out_dir)
-	singularity exec \
+	apptainer exec \
 		-B $(out_dir) \
 		-B $(in_dir) \
 		$(GUPPY_GPU_SIF) guppy_basecaller \
@@ -58,7 +58,7 @@ fastq.qc.with.nanoplot.seq.summary: # sample=, run=
 	$(eval in_dir=$(FQ_DIR)/$(PROJECT)/$(sample)/$(run))
 	$(eval qc_dir=$(FQ_DIR)/$(PROJECT)/$(sample)/qc01_$(run)_by_seq_summary)
 	mkdir -p $(qc_dir)
-	singularity exec \
+	apptainer exec \
 		-B $(in_dir) \
 		-B $(qc_dir) \
 		$(NANOPLOT_SIF) NanoPlot \
@@ -73,7 +73,7 @@ merge.pass.fastq.and.fastq.qc: #sample=, run=
 	$(eval stat=stat_$(out))
 	cat $(in_dir)/pass/*.fastq* > $(merge_fq)
 	mkdir -p $(qc_dir)
-	singularity exec \
+	apptainer exec \
 		-B $(FQ_DIR)/$(PROJECT)/$(sample) \
 		$(NANOPLOT_SIF) NanoPlot \
 		-t 8 \
@@ -85,7 +85,7 @@ align.ont.minimap2: #sample=,run=
 	$(eval bam_pre=$(BAM_DIR)/$(PROJECT)/$(sample)/$(run))
 	$(eval temp=$(SLURM_TMPDIR))
 	mkdir -p $(BAM_DIR)/$(PROJECT)/$(sample)
-	singularity exec \
+	apptainer exec \
 		-B $(merge_fq) \
 		-B $(GRCH38) \
 		-B $(BAM_DIR)/$(PROJECT)/$(sample) \
@@ -107,7 +107,7 @@ align.ont.minimap2: #sample=,run=
 qualimap.bam:   # sample=,run= 
 	$(eval bam=$(BAM_DIR)/$(PROJECT)/$(sample)/$(run).sorted.bam)
 	$(eval outdir=$(BAM_DIR)/$(PROJECT)/$(sample)/qc_$(run))
-	singularity exec \
+	apptainer exec \
 		-B $(BAM_DIR)/$(PROJECT)/$(sample) \
 		$(QUALIMAP_SIF) qualimap bamqc \
 			-bam $(bam) \
@@ -133,7 +133,7 @@ call.clair3: # sample
 	$(eval raw_vcf=$(VAR_DIR)/$(PROJECT)/clair3_g5014/$(sample)_clair3/merge_output.vcf.gz)
 	$(eval qc_vcf=$(VAR_DIR)/$(PROJECT)/clair3_g5014/$(sample)_clair3_pass_GQ20_DP10.vcf.gz)
 	mkdir -p $(outdir)
-	singularity exec \
+	apptainer exec \
                 -B $(REF_DIR) \
                 -B $(BAM_DIR) \
                 -B $(outdir) \
@@ -152,7 +152,7 @@ call.svim: #sample=
 	$(eval bam=$(BAM_DIR)/$(PROJECT)/$(sample).sorted.bam)
 	$(eval outdir=$(VAR_DIR)/$(PROJECT)/svim/$(sample)_svim)
 	mkdir -p $(outdir)
-	singularity exec \
+	apptainer exec \
                 -B $(BAM_DIR) \
                 -B $(REF_DIR) \
                 $(SVIM_SIF) svim alignment \
@@ -171,7 +171,7 @@ call.cuteSV: ##sample  #fasta not zip
 	$(eval vcf=$(VAR_DIR)/$(PROJECT)/cuteSV/$(sample)/$(sample).cuteSV.mq7ms6.vcf)
 	$(eval workdir=$(VAR_DIR)/$(PROJECT)/cuteSV/$(sample)/$(sample).cuteSV.mq7ms6)
 	mkdir -p $(workdir)
-	singularity exec \
+	apptainer exec \
                 -B $(BAMDIR) \
                 -B $(fasta) \
                 $(CUTESV_SIF) cuteSV \
@@ -195,7 +195,7 @@ call.sniffles: #sample=
 	$(eval vcf=$(VAR_DIR)/$(PROJECT)/sniffles2/$(sample).sniffles2.vcf)
 	$(eval snf=$(VAR_DIR)/$(PROJECT)/sniffles2/$(sample).sniffles2.snf)
 	mkdir -p $(VAR_DIR)/$(PROJECT)/sniffles2
-	singularity exec \
+	apptainer exec \
                 -B $(BAM_DIR) \
                 -B $(TAMDEM_BED) \
                 $(SNIFFLES_SIF) sniffles \
@@ -212,14 +212,14 @@ call.pbsv: #sample= #fasta not zip
 	$(eval svsig=$(VAR_DIR)/$(PROJECT)/pbsv/$(sample).pbsv.svsig.gz)
 	$(eval vcf=$(VAR_DIR)/$(PROJECT)/pbsv/$(sample).pbsv.vcf)
 	mkdir -p $(WKDIR)/pbsv/$(sample)
-	singularity exec \
+	apptainer exec \
                 -B $(BAM_DIR) \
                 -B $(TAMDEM_BED) \
                 $(PBSV_SIF) pbsv discover \
                         $(bam) \
                         $(svsig) \
                         --tandem-repeats $(TAMDEM_BED)
-	singularity exec \
+	apptainer exec \
                 -B $(svsig) \
                 -B $(fasta) \
                 $(PBSV_SIF) pbsv call \
@@ -231,7 +231,7 @@ call.pbsv: #sample= #fasta not zip
 index.fast5.by.nanopolish: #sample=
 	$(eval fast5=$(F5_DIR)/$(PROJECT)/$(sample))
 	$(eval merged_fq=$(FQ_DIR)/$(PROJECT)/$(sample).fastq.gz)
-	singularity exec \
+	apptainer exec \
 		-B $(fast5) \
 		-B $(FQ_DIR)/$(PROJECT) \
 		$(NANOPOLISH_SIF) \
@@ -243,7 +243,7 @@ index.fast5.by.nanopolish.with.seq.summary: #sample=
 	$(eval fast5_list=$(shell ls $(fast5) | awk -v f="$(fast5)" '{print f"/"$$1"/fast5_pass"}' | sed ':a;N;$$!ba;s/\n/ -d /g'))
 	$(eval fastq_list=$(shell ls $(FQ_DIR)/$(PROJECT)/$(sample)/*sequencing_summary.txt |  sed ':a;N;$$!ba;s/\n/ -s /g')) 
 	$(eval merged_fq=$(FQ_DIR)/$(PROJECT)/$(sample).fastq.gz)
-	singularity exec \
+	apptainer exec \
 		-B $(fast5) \
 		-B $(FQ_DIR)/$(PROJECT) \
 		$(NANOPOLISH_SIF) \
@@ -258,7 +258,7 @@ nanopolish: #sample=, gene=, t=, range="chr2:178,425,989-178,907,423"
 	$(eval merged_bam=$(BAM_DIR)/$(PROJECT)/$(sample).sorted.bam)
 	$(eval outbam=$(OUTPUT_DIR)/$(PROJECT)/$(gene)/$(sample)_methylation_$(gene).bam)
 	mkdir -p $(OUTPUT_DIR)/$(PROJECT)/$(gene)
-	singularity exec \
+	apptainer exec \
 		-B $(fast5) \
 		-B $(FQ_DIR)/$(PROJECT) \
 		-B $(BAM_DIR)/$(PROJECT) \
@@ -277,7 +277,7 @@ whatshap.phase: #sample=
 	$(eval in_bam=$(BAM_DIR)/$(PROJECT)/$(sample).sorted.bam)
 	$(eval in_vcf=$(VAR_DIR)/$(PROJECT)/clair3_g5014/$(sample)_clair3_pass_GQ20_DP10.vcf.gz)
 	$(eval out_vcf=$(VAR_DIR)/$(PROJECT)/clair3_g5014/$(sample)_clair3_GQ20_DP10_phased.vcf.gz)
-	singularity exec \
+	apptainer exec \
                 -B $(REF_DIR) \
                 -B $(BAMDIR) \
                 -B $(NGSDIR) \
@@ -292,7 +292,7 @@ whatshap.haplotag.bam: #sample=
 	$(eval in_bam=$(BAM_DIR)/$(PROJECT)/$(sample).sorted.bam)
 	$(eval in_vcf=$(VAR_DIR)/$(PROJECT)/clair3_g5014/$(sample)_clair3_GQ20_DP10_phased.vcf.gz)
 	$(eval out_bam=$(BAM_DIR)/$(PROJECT)/$(sample).sorted.phased.bam)
-	singularity exec \
+	apptainer exec \
 		-B $(REF_DIR) \
 		-B $(VAR_DIR) \
 		-B $(BAM_DIR) \
