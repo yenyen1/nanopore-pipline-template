@@ -12,7 +12,7 @@ set -eu -o pipefail
 cd ${SLURM_SUBMIT_DIR}
 
 
-module load singularity &&\
+module load apptainer &&\
 module load samtools/1.12 &&\
 now=`date "+%Y/%m/%d-%H:%M:%S"` &&\
 echo "Starting analysis at ${now}" &&\

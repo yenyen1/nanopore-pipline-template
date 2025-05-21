@@ -14,7 +14,7 @@ cd ${SLURM_SUBMIT_DIR}
 
 echo "${SLURM_SUBMIT_DIR}"
 echo "pwd: `pwd`"
-module load singularity &&\
+module load apptainer &&\
 now=`date "+%Y/%m/%d-%H:%M:%S"` &&\
 echo "Starting analysis at ${now}" &&\
 make besecall.with.guppy.gpu sample=${SAMPLE} run=${RUN} flow_cell=${FLOWCELL} kit=${KIT} run_dir=${FILE} &&\

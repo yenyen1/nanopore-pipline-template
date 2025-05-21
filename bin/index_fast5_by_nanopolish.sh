@@ -14,7 +14,7 @@ cd ${SLURM_SUBMIT_DIR}
 
 echo "${SLURM_SUBMIT_DIR}"
 echo "pwd: `pwd`"
-module load singularity &&\
+module load apptainer &&\
 now=`date "+%Y/%m/%d-%H:%M:%S"` &&\
 echo "Starting analysis at ${now}" &&\
 make index.fast5.by.nanopolish.with.seq.summary sample=${SAMPLE} &&\

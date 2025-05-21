@@ -12,7 +12,7 @@ set -eu -o pipefail
 cd ${SLURM_SUBMIT_DIR}
 
 
-module load singularity bcftools &&\
+module load apptainer bcftools &&\
 now=`date "+%Y/%m/%d-%H:%M:%S"` &&\
 echo "Starting analysis at ${now}" &&\
 make call.pbsv sample=${SAMPLE} &&\

@@ -16,7 +16,7 @@ echo "${SLURM_SUBMIT_DIR}"
 echo "pwd: `pwd`"
 now=`date "+%Y/%m/%d-%H:%M:%S"` &&\
 echo "Starting analysis at ${now}" &&\
-module load singularity python/3.11.2 &&\
+module load apptainer python/3.11.2 &&\
 make nanopolish sample=${SAMPLE} gene=${GENE} t=24 range=${RANGE} &&\
 now=`date "+%Y/%m/%d-%H:%M:%S"` &&\
 echo "Ending analysis at ${now}"

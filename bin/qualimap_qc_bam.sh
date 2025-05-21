@@ -13,7 +13,7 @@ cd ${SLURM_SUBMIT_DIR}
 
 
 #module purge &&\
-module load singularity &&\
+module load apptainer &&\
 now=`date "+%Y/%m/%d-%H:%M:%S"` &&\
 echo "Starting analysis at ${now}" &&\
 # qualimap.bam:   # sample=, pre=, faname=, bamdir=
