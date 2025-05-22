@@ -1,0 +1,7 @@
+Bootstrap: docker
+From: lucapandolfini/whatshap:2.1 
+
+%post
+	pip install numpy
+	pip install matplotlib
+
