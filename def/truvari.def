@@ -1,0 +1,16 @@
+Bootstrap: docker
+From: ubuntu:20.04
+
+%post
+	apt-get -y update
+	DEBIAN_FRONTEND=noninteractive apt-get install -y python3-pip bzip2 tabix bcftools wget python3-dev curl parallel 
+	wget https://mafft.cbrc.jp/alignment/software/mafft_7.520-1_amd64.deb
+	dpkg -i mafft_7.520-1_amd64.deb 
+	rm mafft_7.520-1_amd64.deb
+	python3 -m pip install Truvari==4.2.0
+
+%environment
+
+%runscript
+
+ 
