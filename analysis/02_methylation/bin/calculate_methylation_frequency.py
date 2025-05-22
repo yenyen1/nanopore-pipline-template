@@ -1,4 +1,5 @@
 #! /usr/bin/env python3
+# This script was downloaded from jts/nanopolish (https://github.com/jts/nanopolish/tree/master/scripts)
 
 import sys
 import csv
