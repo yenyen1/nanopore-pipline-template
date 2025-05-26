@@ -101,7 +101,7 @@ whatshap.haplotag.methylated.bam: #sample=, gene=
 	$(eval in_vcf=$(VAR_DIR)/$(PROJECT)/clair3_g5014/$(sample)_clair3_GQ20_DP10_phased.vcf.gz)
 	$(eval out_bam=$(OUTPUT_DIR)/$(PROJECT)/phased/$(sample)_methylated.phased.$(gene).bam)
 	mkdir -p $(OUTPUT_DIR)/$(PROJECT)/phased
-	singularity exec \
+	apptainer exec \
                 -B $(REF_DIR) \
                 -B $(VAR_DIR) \
                 -B $(OUTPUT_DIR) \
@@ -120,7 +120,7 @@ take.igv.converge.snapshot: # gene_list=
 	perl bin/igv.coverage.methylation.sh $(gene_list) $(outdir) > $(batch)
 	xvfb-run --auto-servernum --server-num=1 \
                 --server-args=$(xvfb) \
-                singularity exec \
+                apptainer exec \
                         -B $(IGV_BIN) \
                         -B $(BAM_DIR) \
                         -B $(OUTPUT_DIR) \
@@ -139,7 +139,7 @@ take.igv.haplotag.snapshot: # gene_list=
 	perl bin/igv.haplotag.methylation.sh $(gene_list) $(outdir) > $(batch)
 	xvfb-run --auto-servernum --server-num=1 \
                 --server-args=$(xvfb) \
-                singularity exec \
+                apptainer exec \
                         -B $(IGV_BIN) \
                         -B $(OUTPUT_DIR) \
                         $(OPENJDK11_SIF) $(IGV) \
