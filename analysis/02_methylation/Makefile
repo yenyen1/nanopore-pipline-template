@@ -113,11 +113,12 @@ whatshap.haplotag.methylated.bam: #sample=, gene=
 	samtools index $(out_bam)
 
 take.igv.converge.snapshot: # gene_list=
+	$(eval indir=$(OUTPUT_DIR)/$(PROJECT))
 	$(eval outdir=$(OUTPUT_DIR)/$(PROJECT)/igv_screenshot/methyl_coverage)
 	$(eval batch=$(outdir)/batch_script.txt)
 	$(eval xvfb="-screen 0 1920x1440x24")
 	mkdir -p $(outdir)
-	perl bin/igv.coverage.methylation.sh $(gene_list) $(outdir) > $(batch)
+	perl bin/igv.coverage.methylation.sh $(gene_list) $(indir) $(outdir) > $(batch)
 	xvfb-run --auto-servernum --server-num=1 \
                 --server-args=$(xvfb) \
                 apptainer exec \
@@ -132,11 +133,12 @@ take.igv.converge.snapshot: # gene_list=
 
 
 take.igv.haplotag.snapshot: # gene_list=
+	$(eval indir=$(OUTPUT_DIR)/$(PROJECT))
 	$(eval outdir=$(OUTPUT_DIR)/$(PROJECT)/igv_screenshot/methyl_haplotag/)
 	$(eval batch=$(outdir)/batch_script.txt)
 	$(eval xvfb="-screen 0 1920x1440x24")
 	mkdir -p $(outdir)
-	perl bin/igv.haplotag.methylation.sh $(gene_list) $(outdir) > $(batch)
+	perl bin/igv.haplotag.methylation.sh $(gene_list) $(indir) $(outdir) > $(batch)
 	xvfb-run --auto-servernum --server-num=1 \
                 --server-args=$(xvfb) \
                 apptainer exec \

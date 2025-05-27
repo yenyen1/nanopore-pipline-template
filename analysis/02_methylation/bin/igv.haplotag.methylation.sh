@@ -5,7 +5,8 @@ use strict;
 use warnings;
 
 my $gene_list = $ARGV[0];
-my $output_dir = $ARGV[1];
+my $input_dir = $ARGV[1];
+my $output_dir = $ARGV[2];
 
 open(GENE_LIST,$gene_list) || die "can not open $gene_list\n";
 
@@ -20,28 +21,28 @@ print<<"END";
 
 new
 snapshotDirectory ${output_dir}
-load /lustre07/scratch/yenyenw/Mathyl/OUTPUT/DCM/phased/GDCM035-301_methylation_${gene}_phased.bam
-load /lustre07/scratch/yenyenw/Mathyl/OUTPUT/DCM/phased/GDCM035-401_methylation_${gene}_phased.bam
-load /home/yenyenw/data/CpG_island/cpgIslandExt.bed
+load ${input_dir}/${gene}/family1-1_methylation_${gene}_phased.bam
+load ${input_dir}/${gene}/family1-2_methylation_${gene}_phased.bam
+load ${input_dir}/CpG_island/cpgIslandExt.bed
 goto ${location}
-snapshot ${gene}_methyl_haplotag_family035.png
+snapshot ${gene}_methyl_haplotag_family1.png
 
 new
 snapshotDirectory ${output_dir}
-load /lustre07/scratch/yenyenw/Mathyl/OUTPUT/DCM/phased/GDCM048-301_methylation_${gene}_phased.bam
-load /lustre07/scratch/yenyenw/Mathyl/OUTPUT/DCM/phased/GDCM048-401_methylation_${gene}_phased.bam
-load /home/yenyenw/data/CpG_island/cpgIslandExt.bed
+load ${input_dir}/${gene}/family2-1_methylation_${gene}_phased.bam
+load ${input_dir}/${gene}/family2-2_methylation_${gene}_phased.bam
+load ${input_dir}/CpG_island/cpgIslandExt.bed
 goto ${location}
-snapshot ${gene}_methyl_haplotag_family048.png
+snapshot ${gene}_methyl_haplotag_family2.png
 
 new
 snapshotDirectory ${output_dir}
-load /lustre07/scratch/yenyenw/Mathyl/OUTPUT/DCM/phased/GDCM144-201_methylation_${gene}_phased.bam
-load /lustre07/scratch/yenyenw/Mathyl/OUTPUT/DCM/phased/GDCM144-301_methylation_${gene}_phased.bam
-load /lustre07/scratch/yenyenw/Mathyl/OUTPUT/DCM/phased/GDCM144-302_methylation_${gene}_phased.bam
-load /home/yenyenw/data/CpG_island/cpgIslandExt.bed
+load ${input_dir}/${gene}/family3-1_methylation_${gene}_phased.bam
+load ${input_dir}/${gene}/family3-2_methylation_${gene}_phased.bam
+load ${input_dir}/${gene}/family3-3_methylation_${gene}_phased.bam
+load ${input_dir}/CpG_island/cpgIslandExt.bed
 goto ${location}
-snapshot ${gene}_methyl_haplotag_family144.png
+snapshot ${gene}_methyl_haplotag_family3.png
 
 END
 
