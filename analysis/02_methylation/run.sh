@@ -12,11 +12,11 @@ set -eu -o pipefail
 cd ${SLURM_SUBMIT_DIR}
 
 
-module load singularity &&\
+module load apptainer &&\
 module load samtools/1.12 &&\
 now=`date "+%Y/%m/%d-%H:%M:%S"` &&\
 echo "Starting analysis at ${now}" &&\
-make take.igv.converge.snapshot gene_list=dcm_gene_igv.txt  &&\
+make take.igv.converge.snapshot gene_list=gene_igv.txt  &&\
 now=`date "+%Y/%m/%d-%H:%M:%S"` &&\
 echo "Ending analysis at ${now}"
 
