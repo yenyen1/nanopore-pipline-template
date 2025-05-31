@@ -9,16 +9,13 @@
 #SBATCH -e log/03_call_var/03-7_haplotag_%j.err
 
 set -eu -o pipefail
-cd ${SLURM_SUBMIT_DIR}
+cd "${SLURM_SUBMIT_DIR}"
 
-
-module load apptainer samtools &&\
-now=`date "+%Y/%m/%d-%H:%M:%S"` &&\
-echo "Starting analysis at ${now}" &&\
-make whatshap.haplotag.bam sample=${SAMPLE} &&\
-now=`date "+%Y/%m/%d-%H:%M:%S"` &&\
-echo "Ending analysis at ${now}"
+module load apptainer samtools &&
+	now=$(date "+%Y/%m/%d-%H:%M:%S") &&
+	echo "Starting analysis at ${now}" &&
+	make whatshap.haplotag.bam sample="$SAMPLE" &&
+	now=$(date "+%Y/%m/%d-%H:%M:%S") &&
+	echo "Ending analysis at ${now}"
 
 exit
-
-

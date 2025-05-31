@@ -10,17 +10,15 @@
 #SBATCH -e log/02_mapping/02-5_nanopolish_index_%j.err
 
 set -eu -o pipefail
-cd ${SLURM_SUBMIT_DIR}
+cd "${SLURM_SUBMIT_DIR}"
 
 echo "${SLURM_SUBMIT_DIR}"
-echo "pwd: `pwd`"
-module load apptainer &&\
-now=`date "+%Y/%m/%d-%H:%M:%S"` &&\
-echo "Starting analysis at ${now}" &&\
-make index.fast5.by.nanopolish.with.seq.summary sample=${SAMPLE} &&\
-now=`date "+%Y/%m/%d-%H:%M:%S"` &&\
-echo "Ending analysis at ${now}"
+echo "pwd: $(pwd)"
+module load apptainer &&
+	now=$(date "+%Y/%m/%d-%H:%M:%S") &&
+	echo "Starting analysis at ${now}" &&
+	make index.fast5.by.nanopolish.with.seq.summary sample="$SAMPLE" &&
+	now=$(date "+%Y/%m/%d-%H:%M:%S") &&
+	echo "Ending analysis at ${now}"
 
 exit
-
-

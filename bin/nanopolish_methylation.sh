@@ -10,21 +10,15 @@
 #SBATCH --error=/dev/null
 
 set -eu -o pipefail
-cd ${SLURM_SUBMIT_DIR}
+cd "${SLURM_SUBMIT_DIR}"
 
 echo "${SLURM_SUBMIT_DIR}"
-echo "pwd: `pwd`"
-now=`date "+%Y/%m/%d-%H:%M:%S"` &&\
-echo "Starting analysis at ${now}" &&\
-module load apptainer python/3.11.2 &&\
-make nanopolish sample=${SAMPLE} gene=${GENE} t=24 range=${RANGE} &&\
-now=`date "+%Y/%m/%d-%H:%M:%S"` &&\
-echo "Ending analysis at ${now}"
-
-
-#make run.nanopolish sample=${SAMPLE} &&\
-#make nanopolish sample=${SAMPLE} gene=${GENE} range=${RANGE} &&\
+echo "pwd: $(pwd)"
+now=$(date "+%Y/%m/%d-%H:%M:%S") &&
+	echo "Starting analysis at ${now}" &&
+	module load apptainer python/3.11.2 &&
+	make nanopolish sample="$SAMPLE" gene="$GENE" t=24 range="$RANGE" &&
+	now=$(date "+%Y/%m/%d-%H:%M:%S") &&
+	echo "Ending analysis at ${now}"
 
 exit
-
-

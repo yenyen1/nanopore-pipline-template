@@ -9,18 +9,15 @@
 #SBATCH -e log/02_mapping/02-2_qualimap_qc_bam_%j.err
 
 set -eu -o pipefail
-cd ${SLURM_SUBMIT_DIR}
-
+cd "${SLURM_SUBMIT_DIR}"
 
 #module purge &&\
-module load apptainer &&\
-now=`date "+%Y/%m/%d-%H:%M:%S"` &&\
-echo "Starting analysis at ${now}" &&\
-# qualimap.bam:   # sample=, pre=, faname=, bamdir=
-make qualimap.bam sample=${SAMPLE} run=${RUN} &&\
-now=`date "+%Y/%m/%d-%H:%M:%S"` &&\
-echo "Ending analysis at ${now}"
+module load apptainer &&
+	now=$(date "+%Y/%m/%d-%H:%M:%S") &&
+	echo "Starting analysis at ${now}" &&
+	# qualimap.bam:   # sample=, pre=, faname=, bamdir=
+	make qualimap.bam sample="$SAMPLE" run="$RUN" &&
+	now=$(date "+%Y/%m/%d-%H:%M:%S") &&
+	echo "Ending analysis at ${now}"
 
 exit
-
-
