@@ -1,0 +1,5 @@
+sample_1	run_1	flowcell_1	library_1	sample_pass_dir_1
+sample_2	run_2	flowcell_2	library_2	sample_pass_dir_2
+sample_3	run_3	flowcell_3	library_3	sample_pass_dir_3
+sample_4	run_4	flowcell_4	library_4	sample_pass_dir_4
+sample_5	run_5	flowcell_5	library_5	sample_pass_dir_5
