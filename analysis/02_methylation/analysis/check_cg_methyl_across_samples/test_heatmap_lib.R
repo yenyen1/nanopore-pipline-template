@@ -50,8 +50,8 @@ dev.off()
 # 03-2 draw heatmap (pheatmap)
 png(file="TTN_methy_heatmap_2.png", width = 1800, height = 600, pointsize = 12)
 bk <- c(seq(0,1,by=0.01))
-pheatmap(mat, cluster_cols = F, cluster_rows = F, scale = "none",
-         treeheight_col = 0, treeheight_row = 0, display_numbers = F, 
+pheatmap(mat, cluster_cols = FALSE, cluster_rows = FALSE, scale = "none",
+         treeheight_col = 0, treeheight_row = 0, display_numbers = FALSE, 
          color = colorRampPalette(c("white","red","purple","blue"))(length(bk)))
 dev.off()
 
@@ -65,7 +65,7 @@ getExonMat <- function(geneName, file, genes_info){
   mat_len <- genes_info$end[idx] - genes_info$start[idx] + 1
   
   bar <- rep(0, mat_len)
-  for( i in 1:nrow(exon_data)){
+  for( i in seq_len(nrow(exon_data))){
     for(j in exon_data$start[i]:exon_data$end[i]){
       bar[j-genes_info$start[idx]+1] <- 0.999
     }
@@ -76,7 +76,7 @@ getExonMat <- function(geneName, file, genes_info){
 getfreqMat <- function(start, end, block_data){
   mat_len <- end - start + 1
   bar <- rep(0.0 ,mat_len)
-  for( i in 1:nrow(block_data)){
+  for( i in seq_len(nrow(block_data))){
     for(j in block_data$start[i]:block_data$end[i]){
       bar[j-start+1] <- block_data$methylated_frequency[i]
     }

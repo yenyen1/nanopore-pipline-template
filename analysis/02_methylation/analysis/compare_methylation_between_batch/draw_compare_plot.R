@@ -1,7 +1,7 @@
 library(ggplot2)
 library(RColorBrewer)
 
-dir="data directory (NEED TO CHANGE)"
+dir <- "data directory (NEED TO CHANGE)"
 
 ### Run pairwise comparisons between all samples 
 SAMPLES1 <- c("sample1-b1","sample2-b1",)
@@ -9,8 +9,8 @@ SAMPLES2 <- c("sample1-b2","sample2-b2",)
 gene <- "BAG3"
 
 par(mfrow=c(2,2))
-for(i in 1:length(SAMPLES1)){
-  for(j in 1:length(SAMPLES2)){
+for(i in seq_along(SAMPLES1)){
+  for(j in seq_along(SAMPLES2)){
     print( paste(SAMPLES1[i],SAMPLES2[j], sep=","))
     draw_compare(dir,sample1,sample2,gene)
   }
@@ -26,7 +26,7 @@ draw_compare(dir,sample1,sample2,gene)
 ### function 
 draw_compare <- function(dir,sample1,sample2,gene){
   file <- paste(dir,"/",gene,"_",sample1,"_vs_",sample2,".tsv", sep="")
-  data <- read.table(file, header=F)
+  data <- read.table(file, header=FALSE)
   colnames(data) <- c("chrom","pos",
                       "f1_methyl_count", "f1_total_count", "f1_methyl_freq",
                       "f2_methyl_count", "f2_total_count", "f2_methyl_freq")
